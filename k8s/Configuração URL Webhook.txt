@@ -1,0 +1,15 @@
+Configuração URL Webhook para Integração com o Mercado Pago:
+
+Criar uma conta em https://ngrok.com/       
+executar os passos no link: https://dashboard.ngrok.com/get-started/setup/windows
+
+No comando: ngrok http http://localhost:8080 utilizar a porta listada no arquivo yaml do seu deployment
+
+o ngrok irá gerar uma url semelhante a essa: https://6338-177-23-242-107.ngrok-free.app?
+
+colar a url na propriedade "app-url" no arquivo application.yaml da aplicação que será utilizada para a prop "notification-url" do mercado pago.
+
+rodar o Docker build para gerar a imagem
+
+subir a infra no kubernets
+

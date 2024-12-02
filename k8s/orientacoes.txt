@@ -1,0 +1,18 @@
+Instalar o docker desktop e habilitar o kubernetes
+Na pasta do projeto No powershell como administrador
+
+executar: docker build -t gestaopedidos:latest .
+executar: kubectl apply -f app-db-deployment.yaml
+executar: kubectl apply -f app-deployment.yaml
+executar: kubectl apply -f app-service.yaml
+executar: kubectl get pods - ambos tem que estar Running e ready 1/1
+
+Configurando HPA
+
+executar: kubectl get deployment metrics-server -n kube-system
+Se der algum erro, executar: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+executar: kubectl edit deployment metrics-server -n kube-system
+No notepad que abrir, dentro de spec: spec: containers: - args: incluir - --kubelet-insecure-tls em baixo do secure port
+Substituir o - --kubelet-preferred-address-types para: InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP
+executar: kubectl apply -f hpa.yaml
+executar: kubectl apply -f clusterrolebinding-file.yaml

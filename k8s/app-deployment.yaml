@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestaopedidos-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gestaopedidos
+  template:
+    metadata:
+      labels:
+        app: gestaopedidos
+    spec:
+      containers:
+        - name: gestaopedidos
+          image: gestaopedidos:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: db-service
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: gestaopedidos
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: secret
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pg_isready -h db-service -p 5432 -U postgres -d gestaopedidos"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "200m"

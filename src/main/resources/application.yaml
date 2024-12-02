@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: techchallenger
+  datasource:
+    url: jdbc:postgresql://localhost:5433/gestaopedidos
+    username: postgres
+    password: secret
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# OpenApi
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+  version: v1
+  show-actuator: true
+
+#Credenciais do mercago pago
+mercadopago:
+  access_token: APP_USR-4103898864629348-100313-818c0e2802debe0ad24344fa2b6bcc46-2016994601
+  user_id: 2016994601
+  external_pos_id: caixa1
+  notification_url: "/paymentOrder/makePayment"
+
+#Url da aplicação: no momento estamos utilizando a url gerada pelo ngrok
+app-url: https://6338-177-23-242-107.ngrok-free.app
+
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gestaopedidos-service
+spec:
+  selector:
+    app: gestaopedidos
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30007
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP

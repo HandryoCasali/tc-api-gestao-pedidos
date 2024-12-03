@@ -94,3 +94,4 @@ Arquivo com a collection.json, contendo os exemplos de requisiçãoo do projeto,
 - Luis Henrique Carreira
 - Victor Hugo Silva Lima
 
+Teste

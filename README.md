@@ -73,8 +73,15 @@ $ minikube service gestaopedidos-service --url
 4. O powershell retorna a url da aplicação.
 
 ### Collection
-Arquivo com a collection.json, contendo os exemplos de requisiçãoo do projeto, inserido na pasta raiz do projeto.
+- Arquivo com a collection, contendo os exemplos de requisiçãoo do projeto, inserido na pasta raiz do projeto.
 
+```
+collection.json
+```
+- Arquivo com o fluxo de aquisições inserido na pasta raiz do projeto.
+```
+flow.md
+```
 [<img src="images/collection.PNG" width="500" height="300"/>]
 
 
@@ -94,4 +101,3 @@ Arquivo com a collection.json, contendo os exemplos de requisiçãoo do projeto,
 - Luis Henrique Carreira
 - Victor Hugo Silva Lima
 
-teste

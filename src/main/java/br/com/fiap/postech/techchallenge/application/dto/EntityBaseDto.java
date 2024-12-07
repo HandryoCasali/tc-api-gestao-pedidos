@@ -1,4 +1,4 @@
-package br.com.fiap.postech.techchallenge.core.dto;
+package br.com.fiap.postech.techchallenge.application.dto;
 
 import lombok.Getter;
 import lombok.Setter;

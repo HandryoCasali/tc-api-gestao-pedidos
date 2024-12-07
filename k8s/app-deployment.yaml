@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: gestaopedidos
-          image: gestaopedidos:latest
-          imagePullPolicy: Never
+          image: 103531044887.dkr.ecr.us-east-1.amazonaws.com/tech_challenge_repository:latest
           ports:
             - containerPort: 8080
           env:

@@ -9,7 +9,7 @@ env:
   REGION_DEFAULT: "us-east-1"
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  IMAGE_TAG: latest
+  IMAGE_TAG: test
 
 jobs:
   deploy:
@@ -55,6 +55,10 @@ jobs:
       - name: Update Kube Config
         run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.REGION_DEFAULT }}
 
-      - name: Kube Apply
+      # - name: Kube Apply
+      #   run: |
+      #     kubectl apply -f k8s/app-deployment.yaml
+
+      - name: Kube set image
         run: |
-          kubectl apply -f k8s/app-deployment.yaml
+          kubectl set image deployment/gestaopedidos-deployment gestaopedidos=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/tech_challenge_repository:${{ env.IMAGE_TAG }}

@@ -9,15 +9,16 @@ env:
   REGION_DEFAULT: "us-east-1"
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
 jobs:
-  deploy:
-    name: Deploy AWS Academy
+  # Job para configurar as credenciais da AWS
+  aws-configure:
+    name: AWS Configure
     runs-on: ubuntu-latest
+    outputs:
+      aws-region: ${{ env.REGION_DEFAULT }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: AWS Configure
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -26,7 +27,15 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.REGION_DEFAULT }}
 
-      # Gerar tag com data e hora
+  # Job para Build da Imagem Docker
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: aws-configure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set image tag with current date and time
         id: image_tag
         run: |
@@ -34,18 +43,36 @@ jobs:
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "Using image tag: $IMAGE_TAG"
 
-      - name: Login to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ env.REGION_DEFAULT }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION_DEFAULT }}.amazonaws.com
-
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
+
+  # Job para Push da Imagem para o ECR
+  push_ecr:
+    name: Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    needs: [aws-configure, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.REGION_DEFAULT }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION_DEFAULT }}.amazonaws.com
 
       - name: Push Docker image to Amazon ECR
         run: |
           docker tag ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION_DEFAULT }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION_DEFAULT }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+  # Job para Deploy no Kubernetes
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: [aws-configure, push_ecr]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Update Kube Config
         run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.REGION_DEFAULT }}

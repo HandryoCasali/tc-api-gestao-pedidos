@@ -11,6 +11,14 @@ env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Run tests
+        run: |
+          ./mvnw clean test
+  
   deploy:
     name: Deploy AWS Academy
     runs-on: ubuntu-latest
